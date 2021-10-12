@@ -46,3 +46,9 @@
     
       `pip install -i https://mirrors.tencent.com/pypi/simple/ --upgrade tencentcloud-sdk-python`
     
+## ✅关于使用
+1. 可使用Releases中的打包版本，无需python环境以及相关依赖
+2. config.yml文件中配置账号、密码、学校。
+3. cs.txt文件中输入学号、密码（注意josn格式）
+4. xcfg.yml中进行相关详细相关设置。（任务筛选等）
+5. python index.py         enjoy it！
