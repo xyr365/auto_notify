@@ -36,3 +36,13 @@
 
 3. 使用CQ进行私聊通知提醒
     [使用该项目](https://github.com/Mrs4s/go-cqhttp)登陆拥有好友关系的QQ进行私聊提醒，qq只要登陆就行，没什么其他设置要求
+
+## ✅关于依赖
+   安装依赖：到这一步，您就可以开始执行以下命令开始安装依赖了。在`cmd`中~~输入~~粘贴上以下代码按回车即可安装依赖
+
+    `pip3 install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple`
+    
+    可能还会缺少腾讯云短信的依赖，再次在`cmd`中~~输入~~粘贴上以下代码按回车即可
+    
+      `pip install -i https://mirrors.tencent.com/pypi/simple/ --upgrade tencentcloud-sdk-python`
+    
