@@ -1,5 +1,6 @@
 <h1 align="center">fzu-auto_notify</h1>
-    基于[@ZimoLoveShuang](https://github.com/ZimoLoveShuang),[@thriving123](https://github.com/thriving123)项目，开发的今日校园任务催报脚本，本人非计算机专业纯属兴趣，代码水平低，各位大佬就看个乐。另外本人因水平以及精力有限，可能无法适配其他学校以及进行更新，望各位海涵。
+    基于[ZimoLoveShuang](https://github.com/ZimoLoveShuang),
+    [thriving123](https://github.com/thriving123) 项目，开发的今日校园任务催报脚本，本人非计算机专业纯属兴趣，代码水平低，各位大佬就看个乐。另外本人因水平以及精力有限，可能无法适配其他学校以及进行更新，望各位海涵。
 
 # 功能
 
