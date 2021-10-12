@@ -15,7 +15,7 @@
     - [x] 签到/填报异常名单统计
     - [x] 进行QQ私聊通知（依赖于cq）
     - [x] 进行邮箱通知
-    - [x] 腾讯云短信通知（自行申请购买，1000条/50元）
+    - [x] 腾讯云短信通知（自行申请购买，1000条/50元）默认移除，需自行修改。
 2. 正在测试中的功能
     - [x] 异常名单通知
 <p align="center"><img src="https://github.com/xyr365/auto_notify/blob/main/IMG/total.png?raw=true"/></p>
