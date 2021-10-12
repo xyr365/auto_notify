@@ -28,6 +28,5 @@
             "mailbody": ""
             }
 
-3. 修改通知方式:
-
-![step3](https://user-images.githubusercontent.com/17078589/92497907-890c7800-f22c-11ea-92fa-cb55dfb2c567.png)
+3. 使用CQ进行私聊通知提醒
+    [使用该项目](https://github.com/Mrs4s/go-cqhttp)登陆拥有好友关系的QQ进行私聊提醒，qq只要登陆就行，没什么其他设置要求
