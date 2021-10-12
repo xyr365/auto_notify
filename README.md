@@ -40,11 +40,11 @@
 ## ✅关于依赖
    安装依赖：到这一步，您就可以开始执行以下命令开始安装依赖了。在`cmd`中~~输入~~粘贴上以下代码按回车即可安装依赖
 
-    `pip3 install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple`
+    pip3 install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple
     
-    可能还会缺少腾讯云短信的依赖，再次在`cmd`中~~输入~~粘贴上以下代码按回车即可
+   到这一步，可能会缺少腾讯云sdk依赖。在`cmd`中~~输入~~粘贴上以下代码按回车即可安装依赖
     
-      `pip install -i https://mirrors.tencent.com/pypi/simple/ --upgrade tencentcloud-sdk-python`
+    pip install -i https://mirrors.tencent.com/pypi/simple/ --upgrade tencentcloud-sdk-python
     
 ## ✅关于使用
 1. 可使用Releases中的打包版本，无需python环境以及相关依赖
