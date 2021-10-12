@@ -10,3 +10,4 @@
     - [x] 腾讯云短信通知（自行申请，付费1000条/50元）
 2. 正在测试中的功能
     - [x] 异常名单通知
+<p align="center"><img src="https://raw.githubusercontent.com/xyr365/auto_notify/main/IMG/total.png"/></p>
