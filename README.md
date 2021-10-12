@@ -1,6 +1,10 @@
 <h1 align="center">fzu-auto_notify</h1>
-    基于[@ZimoLoveShuang](https://github.com/ZimoLoveShuang)，[@thriving123](https://github.com/thriving123)项目，开发的今日校园任务催报脚本，本人非计算机专业纯属兴趣，代码水平低，各位大佬就看个乐。另外本人因能力以及精力有限，可能无法适配其他学校以及进行更新，望各位海涵。
+        基于[@ZimoLoveShuang][@thriving123]项目，开发的今日校园任务催报脚本，本人非计算机专业纯属兴趣，代码水平低，各位大佬就看个乐。
+    另外本人因能力以及精力有限，可能无法适配其他学校以及进行更新，望各位海涵。
 
+
+
+    
 # 功能
 
 1. 已经实现的功能
@@ -14,6 +18,7 @@
 <p align="center"><img src="https://github.com/xyr365/auto_notify/blob/main/IMG/total.png?raw=true"/></p>
 
 # 你可能需要这些东西👇
+
 
 1. 在辅导猫特殊关注辅导员，获取助教权限（需获得辅导员同意）
 
