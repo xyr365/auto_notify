@@ -1,0 +1,6 @@
+debug: true
+users:
+  - user:
+      username: "1111111"
+      password: "11111111"
+      schoolName: 福州大学
