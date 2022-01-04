@@ -51,6 +51,35 @@
     
     pip install -i https://mirrors.tencent.com/pypi/simple/ --upgrade tencentcloud-sdk-python
     
+## ✅关于QQ群@未填人员
+   由于我自己使用的已经被我改得乱七八糟，就不修改仓库代码了，以下是QQ群@的实例
+
+        if resj['code'] == '0':
+        csj = ''
+        with open('cs.txt', 'r') as cs:
+            csj = json.load(cs)
+        t = "每日一报，已提交{tnum}人，未提交{unum}人：\n"
+        names = t.format(tnum = resj['datas']['handledSize'], unum = resj['datas']['unHandledSize'])
+        qmsg = names
+        for i in range(0, resj['datas']['totalSize']):
+            name = resj['datas']['rows'][i]['name']
+            num = resj['datas']['rows'][i]['userId']
+            for k in range(0, len(csj)) :
+                if csj[k]['userId'] == num :
+                    names = names + name  + "(1), "
+                    qmsg = "{qmsg}    {name}(1)[CQ:at,qq={qq}]\n".format(qmsg = qmsg, name = name, qq = csj[k]['qq'])
+                    break
+                elif k == len(csj)-1 :
+                    names = names + name + "(0), "
+                    #qmsg = qmsg + name + "(0)"
+                    qmsg = "{qmsg}    {name}(0)\n".format(qmsg = qmsg, name = name)
+        print(qmsg)
+        sendQmsgChan(qmsg)
+    
+   CQ的请求地址
+    
+    http://127.0.0.1:5700/send_group_msg?group_id=797362564&message={qmsg}
+    
 ## ✅关于使用
 1. 可使用Releases中的打包版本，无需python环境以及相关依赖
 2. config.yml文件中配置账号、密码、学校。
