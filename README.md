@@ -52,7 +52,7 @@
     pip install -i https://mirrors.tencent.com/pypi/simple/ --upgrade tencentcloud-sdk-python
     
 ## ✅关于QQ群@未填人员
-   由于我自己使用的已经被我改得乱七八糟，就不修改仓库代码了，以下是QQ群@的实例
+   由于我自己使用的已经被我改得乱七八糟，就不修改仓库代码了，以下是QQ群@的示例
 
         if resj['code'] == '0':
         csj = ''
