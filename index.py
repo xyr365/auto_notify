@@ -178,198 +178,208 @@ def getList(moduleCode = 4):
     #moduleCode：4表示信息收集，6表示签到
     data ='{"pageNumber":1,"pageSize":20,"moduleCode":"' + str(moduleCode) + '","creatorWid":"","signType":"","sortColumn":"","content":""}'
     url = f'https://{config["SchoolHost"]}/wec-counselor-apps/counselor/homepage/getFollowsInProgress'
-    res = requests.post(url, data=data, headers=headers, verify=False)
-    resj = json.loads(res.text)
-    wid = 0
-    with open(config['studentjsonfile'], 'r') as cs:
-        csj = json.load(cs)
-    if len(resj) != 0 and resj['datas']['totalSize'] != 0 :
-        for i in range(0, resj['datas']['totalSize']) :
-            wid = resj['datas']['rows'][i]['pcUrl']
-            tbycmdsigle=""
-            #print(resj['datas']['rows'][i]['endTime'])
-            #continue
-            wid = wid.split('/')[5] #url可能会发生变动，后续可能需要进一步进行准确判断
-            #wid = '106981'
-            title = resj['datas']['rows'][i]['content']
-            mon = datetime.datetime.now().timetuple().tm_mon
-            day = datetime.datetime.now().timetuple().tm_mday
-            et = datetime.datetime.now().today().strftime("%m-%d")
-            if title.rfind(config["signkeyword"]) >= 0: 
-                    print(title, '截止时间：', resj['datas']['rows'][i]['endTime'],"不在筛选范围内","\n")
-                    print('#############################################################################################\n')
-                    continue
-            #et = f'{mon}-{day}'
-            print("=》任务名称：",title, '\n=》截止时间：', resj['datas']['rows'][i]['endTime'])
-            if resj['datas']['rows'][i]['progressBarPercent'] ==0:
-                print(title, '截止时间：', resj['datas']['rows'][i]['endTime'],"任务未发布","\n")
-                continue
-            if config['Judgmentdate'] :
-                if resj['datas']['rows'][i]['endTime'].rfind(et) == -1 :
-                    print('#############################################################################################\n')
-                    continue
-            abnr = [] #注意测试变量初始化
-            jcabnr = [] #注意测试变量初始化
-            if moduleCode == 6:
-                data = '{"pageSize":1,"pageNumber":1,"taskWid":"' + str(wid) + '"}'
-                url = f'{config["SchoolHost"]}/wec-counselor-sign-apps/sign/counselor/querySignTaskDayStatistic'
-                res0 = requests.post(url, data = data, headers = headers, verify = False).json()
-                twid = res0['datas']['rows'][0]['signInstanceWid']
-                data = '{"pageNumber":1,"pageSize":1000,"signStatus":2,"sortColumn":"userId asc","cls":"","clsName":"","grade":"","dept":"","deptName":"","major":"","isLate":"-1","majorName":"","qrcodeUserWid":"-1","hasChangeLog":"","isMalposition":"-1","extraFieldItemVos":[],"taskWid":"' + wid + '","taskInstanceWid":"' + twid + '"}'
-                url = f'{config["SchoolHost"]}/wec-counselor-sign-apps/sign/counselor/querySingleSignList'
-                res1 = requests.post(url, data = data, headers = headers, verify = False).json()
-                wqd += res1['datas']['unsignedNum']
-                data1 = '{"pageNumber":1,"pageSize":500,"signStatus":1,"sortColumn":"userId asc","extraFieldItemVos":[{"wid":32161,"title":"午检体温 (必填)","description":"请如实填报","hasOtherItems":0,"extraFieldItem":"大于等于37.3度","extraFieldItemWid":73584,"isExtraFieldOtherItem":0,"fieldIndex":0}],"isLate":"-1","hasChangeLog":"","isMalposition":"-1","cls":"","clsName":"","dept":"","deptName":"","major":"","majorName":"","grade":"","qrcodeUserWid":"-1","taskWid":"' + wid + '","taskInstanceWid":"' + twid + '"}' 
-                data1 = data1.encode("utf-8").decode("latin1")
-                data2 = '{"pageNumber":1,"pageSize":20,"signStatus":1,"sortColumn":"userId asc","extraFieldItemVos":[{"wid":32162,"title":"是否有发热、咳嗽、乏力、呼吸困难等疑似症状(必填)","description":"请如实填报","hasOtherItems":0,"extraFieldItems":[{"content":"否","wid":73585,"isOtherItems":0,"isSelected":null,"isAbnormal":false},{"content":"是","wid":73586,"isOtherItems":0,"isSelected":null,"isAbnormal":true}],"extraFieldItem":"是","extraFieldItemWid":73586,"isExtraFieldOtherItem":0,"fieldIndex":1}],"isLate":"-1","hasChangeLog":"","isMalposition":"-1","cls":"","clsName":"","dept":"","deptName":"","major":"","majorName":"","grade":"","qrcodeUserWid":"-1","taskWid":"' + wid + '","taskInstanceWid":"' + twid + '"}' 
-                data2 = data2.encode("utf-8").decode("latin1")
-                Data = [data1, data2]
-                url = 'https://fzu.campusphere.net/wec-counselor-sign-apps/sign/counselor/querySingleSignList'
-                #jcabnr = [] #变量初始化移动到上层，注意测试
-                if title.rfind('监测') != -1 :
-                    for dti in range(0, len(Data)) :
-                        jcycres = requests.post(url, data = Data[dti], headers = headers, verify = False).json()
-                        if jcycres['datas']['totalSize'] != 0 :
-                            for jci in range(0, jcycres['datas']['totalSize']) :
-                                name = jcycres['datas']['rows'][jci]['name']
-                                tel = jcycres['datas']['rows'][jci]['mobile']
-                                rw = title
-                                major = jcycres['datas']['rows'][jci]['major']
-                                for j in range(0, len(csj)) :
-                                    if csj[j]['userId'] == jcycres['datas']['rows'][jci]['userId'] :
-                                        qq = csj[j]['qq']
-                                        qqemail=qq+"@qq.com"
-                                        break
-                                    elif j == len(csj)-1 :#-1，否则只能匹配到名单内
-                                        qq = ""
-                                        qqemail=""
-                                ycmd = {}
-                                ycmd = {'name':name, 'tel':tel, 'task':rw, 'major':major, 'qqemail':qqemail, 'qq':qq}
-                                ycmdhz.append(ycmd)
-                                jcabnr.append(jcycres['datas']['rows'][jci]['name'])
-                jcabnr = list(set(jcabnr))
-                for yci in range(0, len(jcabnr)) :
-                    qdycmd = qdycmd + jcabnr[yci] + '，'
-                qdyc = len(jcabnr)
-                if res1['datas']['totalSize'] != 0 :
-                    for group in config['groups'] :
-                        qmsg = "{title}，已签到 {snum} 人，未签到 {unum} 人：\n".format(title = title, snum = res1['datas']['signedNum'], unum = res1['datas']['unsignedNum'])
-                        prsList(res1, title, qmsg, group)
-                else :
-                    print(title + '已全部完成！\n')
-                if qdyc != 0 and title.rfind('监测') != -1 :
-                    jcjg = f"{title}{len(jcabnr)}人异常：{qdycmd[:-1]}"
-                    print(f"=====》》{title}{len(jcabnr)}人异常：{qdycmd[:-1]}\n")
-                elif title.rfind('监测') != -1 :
-                    jcjg = f"{title}没有出现异常情况！"
-                    print(f"=====》》{title}没有出现异常情况！\n")
-            elif moduleCode == 4 :
-                #print(resj)
-                #exit()
-                if title.rfind(config["keyword1"]) == -1 and title.rfind(config["keyword2"])== -1: 
-                    print(title, '截止时间：', resj['datas']['rows'][i]['endTime'],"不在筛选范围内","\n")
-                    print('#############################################################################################\n')
-                    continue #标题判断任务，如果匹配不到，则跳过此条数据
-                #if title.rfind("config['keyword']") == -1 : 
-                 #   print(title, '截止时间：', resj['datas']['rows'][i]['endTime'],"不在筛选范围内","\n")
-                  #  print('#############################################################################################\n')
-                   # continue #标题判断任务，如果匹配不到，则跳过此条数据
-                #新加参数instanceWid
-                insurl = f'{config["SchoolHost"]}/wec-counselor-collector-apps/collector/notice/detailCollector'
-                insdata = '{"wid":"' + wid + '"}'
-                insres = requests.post(insurl, headers = headers, data = insdata, verify = False).json()
-                inswid = insres['datas']['rows'][0]['instanceWid']
-                if inswid == None :
-                    inswid = ''
-                #这里是为填表，应该
-                #data = '{"wid":"' + wid + '","isHandled":0,"isRead":-1,"content":"","pageNumber":1,"pageSize":1000}'
-                data = '{"isRead":"-1","sortColumn":"userId asc","isHandled":"0","wid":"' + wid + '","instanceWid":"' + inswid + '","content":"","pageNumber":1,"pageSize":1000}'
-                url = f'{config["SchoolHost"]}/wec-counselor-collector-apps/collector/notice/queryAllTarget'
-                res = requests.post(url, headers = headers, data = data, verify = False).json()
-                #这里是已填写异常处理
-                data = '{"pageNumber":1,"pageSize":100,"wid":"' + wid + '","instanceWid":"' + inswid + '","photoPageSize":6,"textPageSize":10,"numberPageSize":100}' 
-                url = f'{config["SchoolHost"]}/wec-counselor-collector-apps/collector/statistics/getStatisticsByCollectorWid'
-                res1 = requests.post(url, headers = headers, data = data, verify = False).json()
-                tmp = 0
-                big = 0
-                # abnr = [] #变量初始化移动到上层，注意测试
-                # 类型值输出
-                # #取消以下代码注释以进行测试
-                # for ft in res1['datas']['rows'] :
-                #     print(ft['fieldType'])
-                #     continue
-                # exit()
-                # #取消以上代码注释以进行测试
-                for l in range(0, res1['datas']['totalSize']) :
-                    if res1['datas']['rows'][l]['fieldType'] != 2 :
+    try:
+        res = requests.post(url, data=data, headers=headers, verify=False)
+        resj = json.loads(res.text)
+    except requests.RequestException as err:
+        print(err,"\n请求异常，请核对地址HOST")
+        input("回车键推出")
+        exit()
+    else:
+        if 'WEC-REDIRECTURL' in resj['datas']:
+            print(resj,"\n登录状态失效或有误，请核对cookie或HOST")
+            input("回车键推出")
+            exit()
+        wid = 0
+        with open(config['studentjsonfile'], 'r') as cs:
+            csj = json.load(cs)
+        if len(resj) != 0 and resj['datas']['totalSize'] != 0 :
+            for i in range(0, resj['datas']['totalSize']) :
+                wid = resj['datas']['rows'][i]['pcUrl']
+                tbycmdsigle=""
+                #print(resj['datas']['rows'][i]['endTime'])
+                #continue
+                wid = wid.split('/')[5] #url可能会发生变动，后续可能需要进一步进行准确判断
+                #wid = '106981'
+                title = resj['datas']['rows'][i]['content']
+                mon = datetime.datetime.now().timetuple().tm_mon
+                day = datetime.datetime.now().timetuple().tm_mday
+                et = datetime.datetime.now().today().strftime("%m-%d")
+                if title.rfind(config["signkeyword"]) >= 0: 
+                        print(title, '截止时间：', resj['datas']['rows'][i]['endTime'],"不在筛选范围内","\n")
+                        print('#############################################################################################\n')
                         continue
-                    xx = res1['datas']['rows'][l]['choiceTypeStatisticsList']
-                    qtitle = res1['datas']['rows'][l]['title']
-                    for mm in xx :
-                        if mm['count'] != 0 :
-                            tmp = mm['count']
-                            if tmp > big :
-                                big = tmp
-                    for m in xx :
-                        if m['count'] != 0 and m['count'] < big :
-                            fwid = res1['datas']['rows'][l]['fieldWid']
-                            cont = m.get('content')
-                            if inswid == "" :
-                                inswid = 'null'
-                            #print(cont)
-                            #continue
-                            data = '{"fieldWid":"' + fwid + '","value":"' + cont + '","searchContent":"","collectorWid":"' + wid + '","isSchoolTask": "false","pageNumber":1,"pageSize":1000,"instanceWid":'+ inswid +'}' 
-                            data = data.encode("utf-8").decode("latin1")
-                            url = f'{config["SchoolHost"]}/wec-counselor-collector-apps/collector/statistics/getDetailByValue'
-                            res2 = requests.post(url, data = data, headers = headers, verify = False).json()
-                            #continue
-                            #f#or n in res['datas']['rows'] :#range(0, res2['datas']['totalSize']) :
-                               # abname = n['name']#res2['datas']['rows'][n]['name']
-                            for n in range(0, res2['datas']['totalSize']) :
-                                abname = res2['datas']['rows'][n]['name']
-                                name = res2['datas']['rows'][n]['name']
-                                tel = res2['datas']['rows'][n]['mobile']
-                                rw = title
-                                major = res2['datas']['rows'][n]['major']
-                                for j in range(0, len(csj)) :
-                                    if csj[j]['userId'] == res2['datas']['rows'][n]['userId'] :
-                                        qq = csj[j]['qq']
-                                        qqemail=qq+"@qq.com"
-                                        break
-                                    elif j == len(csj)-1 :#-1，否则只能匹配到名单内
-                                        qq = ""
-                                        qqemail=""
-                                ycmd = {}
-                                ycmd = {'name':name, 'tel':tel, 'task':rw, 'major':major, 'qqemail':qqemail, 'qq':qq}
-                                ycmdhz.append(ycmd)
-                                abnr.append(abname)
-                    big = 0
+                #et = f'{mon}-{day}'
+                print("=》任务名称：",title, '\n=》截止时间：', resj['datas']['rows'][i]['endTime'])
+                if resj['datas']['rows'][i]['progressBarPercent'] ==0:
+                    print(title, '截止时间：', resj['datas']['rows'][i]['endTime'],"任务未发布","\n")
+                    continue
+                if config['Judgmentdate'] :
+                    if resj['datas']['rows'][i]['endTime'].rfind(et) == -1 :
+                        print('#############################################################################################\n')
+                        continue
+                abnr = [] #注意测试变量初始化
+                jcabnr = [] #注意测试变量初始化
+                if moduleCode == 6:
+                    data = '{"pageSize":1,"pageNumber":1,"taskWid":"' + str(wid) + '"}'
+                    url = f'{config["SchoolHost"]}/wec-counselor-sign-apps/sign/counselor/querySignTaskDayStatistic'
+                    res0 = requests.post(url, data = data, headers = headers, verify = False).json()
+                    twid = res0['datas']['rows'][0]['signInstanceWid']
+                    data = '{"pageNumber":1,"pageSize":1000,"signStatus":2,"sortColumn":"userId asc","cls":"","clsName":"","grade":"","dept":"","deptName":"","major":"","isLate":"-1","majorName":"","qrcodeUserWid":"-1","hasChangeLog":"","isMalposition":"-1","extraFieldItemVos":[],"taskWid":"' + wid + '","taskInstanceWid":"' + twid + '"}'
+                    url = f'{config["SchoolHost"]}/wec-counselor-sign-apps/sign/counselor/querySingleSignList'
+                    res1 = requests.post(url, data = data, headers = headers, verify = False).json()
+                    wqd += res1['datas']['unsignedNum']
+                    data1 = '{"pageNumber":1,"pageSize":500,"signStatus":1,"sortColumn":"userId asc","extraFieldItemVos":[{"wid":32161,"title":"午检体温 (必填)","description":"请如实填报","hasOtherItems":0,"extraFieldItem":"大于等于37.3度","extraFieldItemWid":73584,"isExtraFieldOtherItem":0,"fieldIndex":0}],"isLate":"-1","hasChangeLog":"","isMalposition":"-1","cls":"","clsName":"","dept":"","deptName":"","major":"","majorName":"","grade":"","qrcodeUserWid":"-1","taskWid":"' + wid + '","taskInstanceWid":"' + twid + '"}' 
+                    data1 = data1.encode("utf-8").decode("latin1")
+                    data2 = '{"pageNumber":1,"pageSize":20,"signStatus":1,"sortColumn":"userId asc","extraFieldItemVos":[{"wid":32162,"title":"是否有发热、咳嗽、乏力、呼吸困难等疑似症状(必填)","description":"请如实填报","hasOtherItems":0,"extraFieldItems":[{"content":"否","wid":73585,"isOtherItems":0,"isSelected":null,"isAbnormal":false},{"content":"是","wid":73586,"isOtherItems":0,"isSelected":null,"isAbnormal":true}],"extraFieldItem":"是","extraFieldItemWid":73586,"isExtraFieldOtherItem":0,"fieldIndex":1}],"isLate":"-1","hasChangeLog":"","isMalposition":"-1","cls":"","clsName":"","dept":"","deptName":"","major":"","majorName":"","grade":"","qrcodeUserWid":"-1","taskWid":"' + wid + '","taskInstanceWid":"' + twid + '"}' 
+                    data2 = data2.encode("utf-8").decode("latin1")
+                    Data = [data1, data2]
+                    url = 'https://fzu.campusphere.net/wec-counselor-sign-apps/sign/counselor/querySingleSignList'
+                    #jcabnr = [] #变量初始化移动到上层，注意测试
+                    if title.rfind('监测') != -1 :
+                        for dti in range(0, len(Data)) :
+                            jcycres = requests.post(url, data = Data[dti], headers = headers, verify = False).json()
+                            if jcycres['datas']['totalSize'] != 0 :
+                                for jci in range(0, jcycres['datas']['totalSize']) :
+                                    name = jcycres['datas']['rows'][jci]['name']
+                                    tel = jcycres['datas']['rows'][jci]['mobile']
+                                    rw = title
+                                    major = jcycres['datas']['rows'][jci]['major']
+                                    for j in range(0, len(csj)) :
+                                        if csj[j]['userId'] == jcycres['datas']['rows'][jci]['userId'] :
+                                            qq = csj[j]['qq']
+                                            qqemail=qq+"@qq.com"
+                                            break
+                                        elif j == len(csj)-1 :#-1，否则只能匹配到名单内
+                                            qq = ""
+                                            qqemail=""
+                                    ycmd = {}
+                                    ycmd = {'name':name, 'tel':tel, 'task':rw, 'major':major, 'qqemail':qqemail, 'qq':qq}
+                                    ycmdhz.append(ycmd)
+                                    jcabnr.append(jcycres['datas']['rows'][jci]['name'])
+                    jcabnr = list(set(jcabnr))
+                    for yci in range(0, len(jcabnr)) :
+                        qdycmd = qdycmd + jcabnr[yci] + '，'
+                    qdyc = len(jcabnr)
+                    if res1['datas']['totalSize'] != 0 :
+                        for group in config['groups'] :
+                            qmsg = "{title}，已签到 {snum} 人，未签到 {unum} 人：\n".format(title = title, snum = res1['datas']['signedNum'], unum = res1['datas']['unsignedNum'])
+                            prsList(res1, title, qmsg, group)
+                    else :
+                        print(title + '已全部完成！\n')
+                    if qdyc != 0 and title.rfind('监测') != -1 :
+                        jcjg = f"{title}{len(jcabnr)}人异常：{qdycmd[:-1]}"
+                        print(f"=====》》{title}{len(jcabnr)}人异常：{qdycmd[:-1]}\n")
+                    elif title.rfind('监测') != -1 :
+                        jcjg = f"{title}没有出现异常情况！"
+                        print(f"=====》》{title}没有出现异常情况！\n")
+                elif moduleCode == 4 :
+                    #print(resj)
+                    #exit()
+                    if title.rfind(config["keyword1"]) == -1 and title.rfind(config["keyword2"])== -1: 
+                        print(title, '截止时间：', resj['datas']['rows'][i]['endTime'],"不在筛选范围内","\n")
+                        print('#############################################################################################\n')
+                        continue #标题判断任务，如果匹配不到，则跳过此条数据
+                    #if title.rfind("config['keyword']") == -1 : 
+                     #   print(title, '截止时间：', resj['datas']['rows'][i]['endTime'],"不在筛选范围内","\n")
+                      #  print('#############################################################################################\n')
+                       # continue #标题判断任务，如果匹配不到，则跳过此条数据
+                    #新加参数instanceWid
+                    insurl = f'{config["SchoolHost"]}/wec-counselor-collector-apps/collector/notice/detailCollector'
+                    insdata = '{"wid":"' + wid + '"}'
+                    insres = requests.post(insurl, headers = headers, data = insdata, verify = False).json()
+                    inswid = insres['datas']['rows'][0]['instanceWid']
+                    if inswid == None :
+                        inswid = ''
+                    #这里是为填表，应该
+                    #data = '{"wid":"' + wid + '","isHandled":0,"isRead":-1,"content":"","pageNumber":1,"pageSize":1000}'
+                    data = '{"isRead":"-1","sortColumn":"userId asc","isHandled":"0","wid":"' + wid + '","instanceWid":"' + inswid + '","content":"","pageNumber":1,"pageSize":1000}'
+                    url = f'{config["SchoolHost"]}/wec-counselor-collector-apps/collector/notice/queryAllTarget'
+                    res = requests.post(url, headers = headers, data = data, verify = False).json()
+                    #这里是已填写异常处理
+                    data = '{"pageNumber":1,"pageSize":100,"wid":"' + wid + '","instanceWid":"' + inswid + '","photoPageSize":6,"textPageSize":10,"numberPageSize":100}' 
+                    url = f'{config["SchoolHost"]}/wec-counselor-collector-apps/collector/statistics/getStatisticsByCollectorWid'
+                    res1 = requests.post(url, headers = headers, data = data, verify = False).json()
                     tmp = 0
-                abnr = list(set(abnr))
-                for p in range(0, len(abnr)) :
-                    tbycmd = tbycmd + abnr[p] + '，'
-                    tbycmdsigle=tbycmdsigle+abnr[p] + '，'
-                tbyc = len(abnr)+tbyc
-                qmsg = "该任务，已提交 {tnum} 人，未提交 {unum} 人：\n".format(title = title, tnum = res['datas']['handledSize'], unum = res['datas']['unHandledSize'])
-                wtb = res['datas']['unHandledSize']+wtb
-                if wtb != 0 :
-                    total = 1
-                if res['datas']['totalSize'] != 0 :
-                    for group in config['groups'] :
-                        prsList(res, title, qmsg, group)
-                else :
-                    print(f'{title}已全部提交！\n')
-                if len(abnr) != 0 :
-                    tjjg = f"填表异常 {tbyc} 人：{tbycmd[:-1]}"
-                    print(f"=====》》该任务 {len(abnr)} 人填表异常：{tbycmdsigle[:-1]}\n")
-                else :
-                    print("=====》》该任务没有出现异常情况！\n")
-                if tbyc == 0:
-                    tjjg = "信息收集没有出现异常情况！"
-                # elif i == resj['datas']['totalSize']-1 :
-            print('#############################################################################################\n')
-    else :
-        print("任务为空！\n")
+                    big = 0
+                    # abnr = [] #变量初始化移动到上层，注意测试
+                    # 类型值输出
+                    # #取消以下代码注释以进行测试
+                    # for ft in res1['datas']['rows'] :
+                    #     print(ft['fieldType'])
+                    #     continue
+                    # exit()
+                    # #取消以上代码注释以进行测试
+                    for l in range(0, res1['datas']['totalSize']) :
+                        if res1['datas']['rows'][l]['fieldType'] != 2 :
+                            continue
+                        xx = res1['datas']['rows'][l]['choiceTypeStatisticsList']
+                        qtitle = res1['datas']['rows'][l]['title']
+                        for mm in xx :
+                            if mm['count'] != 0 :
+                                tmp = mm['count']
+                                if tmp > big :
+                                    big = tmp
+                        for m in xx :
+                            if m['count'] != 0 and m['count'] < big :
+                                fwid = res1['datas']['rows'][l]['fieldWid']
+                                cont = m.get('content')
+                                if inswid == "" :
+                                    inswid = 'null'
+                                #print(cont)
+                                #continue
+                                data = '{"fieldWid":"' + fwid + '","value":"' + cont + '","searchContent":"","collectorWid":"' + wid + '","isSchoolTask": "false","pageNumber":1,"pageSize":1000,"instanceWid":'+ inswid +'}' 
+                                data = data.encode("utf-8").decode("latin1")
+                                url = f'{config["SchoolHost"]}/wec-counselor-collector-apps/collector/statistics/getDetailByValue'
+                                res2 = requests.post(url, data = data, headers = headers, verify = False).json()
+                                #continue
+                                #f#or n in res['datas']['rows'] :#range(0, res2['datas']['totalSize']) :
+                                   # abname = n['name']#res2['datas']['rows'][n]['name']
+                                for n in range(0, res2['datas']['totalSize']) :
+                                    abname = res2['datas']['rows'][n]['name']
+                                    name = res2['datas']['rows'][n]['name']
+                                    tel = res2['datas']['rows'][n]['mobile']
+                                    rw = title
+                                    major = res2['datas']['rows'][n]['major']
+                                    for j in range(0, len(csj)) :
+                                        if csj[j]['userId'] == res2['datas']['rows'][n]['userId'] :
+                                            qq = csj[j]['qq']
+                                            qqemail=qq+"@qq.com"
+                                            break
+                                        elif j == len(csj)-1 :#-1，否则只能匹配到名单内
+                                            qq = ""
+                                            qqemail=""
+                                    ycmd = {}
+                                    ycmd = {'name':name, 'tel':tel, 'task':rw, 'major':major, 'qqemail':qqemail, 'qq':qq}
+                                    ycmdhz.append(ycmd)
+                                    abnr.append(abname)
+                        big = 0
+                        tmp = 0
+                    abnr = list(set(abnr))
+                    for p in range(0, len(abnr)) :
+                        tbycmd = tbycmd + abnr[p] + '，'
+                        tbycmdsigle=tbycmdsigle+abnr[p] + '，'
+                    tbyc = len(abnr)+tbyc
+                    qmsg = "该任务，已提交 {tnum} 人，未提交 {unum} 人：\n".format(title = title, tnum = res['datas']['handledSize'], unum = res['datas']['unHandledSize'])
+                    wtb = res['datas']['unHandledSize']+wtb
+                    if wtb != 0 :
+                        total = 1
+                    if res['datas']['totalSize'] != 0 :
+                        for group in config['groups'] :
+                            prsList(res, title, qmsg, group)
+                    else :
+                        print(f'{title}已全部提交！\n')
+                    if len(abnr) != 0 :
+                        tjjg = f"填表异常 {tbyc} 人：{tbycmd[:-1]}"
+                        print(f"=====》》该任务 {len(abnr)} 人填表异常：{tbycmdsigle[:-1]}\n")
+                    else :
+                        print("=====》》该任务没有出现异常情况！\n")
+                    if tbyc == 0:
+                        tjjg = "信息收集没有出现异常情况！"
+                    # elif i == resj['datas']['totalSize']-1 :
+                print('#############################################################################################\n')
+        else :
+            print("任务为空！\n")
 
 def sendQmsgChan(qq, msg, type = 0):
     ttype = ['发送群消息到', '私聊']
