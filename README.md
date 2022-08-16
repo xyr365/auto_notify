@@ -41,14 +41,10 @@
 3. 使用CQ进行私聊通知提醒
     [使用该项目](https://github.com/Mrs4s/go-cqhttp)登陆拥有好友关系的QQ进行私聊提醒，qq只要登陆就行，没什么其他设置要求
 
-## ✅关于依赖
-   安装依赖：到这一步，您就可以开始执行以下命令开始安装依赖了。在`cmd`中~~输入~~粘贴上以下代码按回车即可安装依赖
+## ✅关于cookie
+浏览器,打开辅导猫登录-F12-网络-标头中找。cookie 程序大约10分钟左右运行一次可以保证长期有效
+![step1](https://github.com/xyr365/auto_notify/blob/main/IMG/fo.png?raw=true)
 
-    pip3 install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple
-    
-   到这一步，可能会缺少腾讯云sdk依赖。在`cmd`中~~输入~~粘贴上以下代码按回车即可安装依赖
-    
-    pip install -i https://mirrors.tencent.com/pypi/simple/ --upgrade tencentcloud-sdk-python
     
 ## ✅关于QQ群@未填人员
    由于我自己使用的已经被我改得乱七八糟，就不修改仓库代码了，以下是QQ群@的示例
@@ -80,13 +76,4 @@
     http://127.0.0.1:5700/send_group_msg?group_id=797362564&message={qmsg}
     
 ## ✅关于使用
-1. FZU的cas登陆失效，我目前使用CK运行，辅导猫网页登陆F12即可获取MOD_auth需要定时运行保活。
-2. 可使用Releases中的打包版本，无需python环境以及相关依赖
-3. config.yml文件中配置账号、密码、学校。
-4. cs.txt文件中输入学号、QQ（注意josn格式）,用于邮箱、QQ私聊通知
-5. xcfg.yml中进行相关详细相关设置。（任务筛选等）
-6. 若使用短信通知，则手机号码从今日校园直接获得
-7. 至于部署服务器使用，由于腾讯阿里大部分IP均被今日校园封禁，需要使用到代理，需要各位各显神通了。
-8. 催报任务仅限信息收集、签到。由于签到任务万年不变写的比较死，信息收集部分各位可以根据自身需求更改通知方式
-9. QQ邮箱通知内容加上通知者名称不易被识别为垃圾邮件。
-10. python index.py         enjoy it！
+1. 催报任务仅限信息收集、签到。由于签到任务万年不变写的比较死，信息收集部分各位可以根据自身需求更改通知方式
