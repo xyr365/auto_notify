@@ -17,7 +17,7 @@
     - [x] 进行邮箱通知
     - [x] 腾讯云短信通知（自行申请购买，1000条/50元）默认移除，需自行修改。
 2. 正在测试中的功能
-    - [x] 异常名单通知
+    - [x] 查寝（没账号）
 <p align="center"><img src="https://github.com/xyr365/auto_notify/blob/main/IMG/total.png?raw=true"/></p>
 
 # 你可能需要这些东西👇
