@@ -27,7 +27,7 @@
 
 ![step1](https://github.com/xyr365/auto_notify/blob/main/IMG/fo.png?raw=true)
 
-2. 构建自己的邮件发送API，
+2. 构建自己的邮件发送API，短信通知要钱，邮箱有概率进垃圾箱，建议使用QQ
 
     如果你需要使用邮箱通知的话需要用到[API申请](https://mp.weixin.qq.com/s?__biz=MzA3NzMwNjM0MA==&mid=2649807321&idx=1&sn=35710d5df1f778b83f2a38c8e7a0ddf9&chksm=87507952b027f0444cfdfd03e7bc8d992ead5cdc2ddaa787d8405ea5f49412581693fa4617e9&mpshare=1&scene=23&srcid=10071p9HrVkTV194DXVtDeWz&sharer_sharetime=1633540006916&sharer_shareid=cde0c199d9f6ce11f7bcb010f1564c15#rd)进行相关申请
     JSON=
